@@ -8,12 +8,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <stdbool.h>
 
 double** allocateMatrix(int, int);
 double randomZeroToOne();
 void fillMatrixRandomly(double**, int, int);
 void fillMatrixByDistance(double**, double**, int, int);
 double distance(double**, int, int, int);
+int* findMin(int*, bool*);
+void primsMST(double**, int);
 
 int main(int argc, const char * argv[]) {
     
@@ -85,7 +88,14 @@ int main(int argc, const char * argv[]) {
     printf("Number of nodes: %d\n", numpoints);
     printf("Trials: %d\n", numtrials);
     printf("Dimensions: %d\n", dimensions);
+    
+    
+    // AVI ADDED THIS LINE
+    
+    primsMST(adjmatrix, numpoints);
     return 0;
+    
+    
 }
 
 // Allocates memory for an X by Y matrix
@@ -163,6 +173,68 @@ double distance(double** coordinates, int dimensions, int node1, int node2) {
     double distance = sqrt(sumOfSquares);
     return distance;
 }
+
+// Implement Prims (THIS IS WHERE AVI STARTED)
+
+int* findMin(int verts[], bool inMST[]) {
+    return &verts[0];
+}
+
+void primsMST(double** graph, int n) {
+    
+    // This statement isn't printing.. so have I really called the function?
+    printf("Started!\n");
+    
+    int parent[n];
+    int key[n];
+    bool inMST[n];
+    
+    for (int i = 0; i < n; i++) {
+        key[i] = 2;
+        inMST[i] = false;
+    }
+    
+    key[0] = 0;
+    parent[0] = -1;
+    
+    
+    // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
+    for (int k = 0; k < n-1; k++){
+        int* minpath = findMin(key, inMST);
+        
+        inMST[*minpath] = true;
+        
+        for (int j = 0; j < n; j++) {
+            // need to add removed edges condition by checking if edge exists
+            if ((inMST[j] == false) & (graph[k][j] < key[j])) {
+                parent[j] = k;
+                key[j] = graph[k][j];
+            }
+        }
+    }
+    printf("Got to the end!\n");
+               
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
