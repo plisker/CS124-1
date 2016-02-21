@@ -88,8 +88,9 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
-
 // Allocates memory for an X by Y matrix
+// Inspiration... http://pleasemakeanote.blogspot.com/2008/06/2d-arrays-in-c-using-malloc.html
+// We might have to change this or cite the webstie above
 double** allocateMatrix(int X, int Y) {
     double** adjmatrix;
     adjmatrix = (double**) malloc(X*sizeof(double*));
@@ -121,15 +122,21 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
     {
         for(int j=(0+i); j< numpoints; j++)
         {
-            adjmatrix[i][j] = distance(coordinates, dimensions, i, j);
-            adjmatrix[j][i] = adjmatrix[i][j];
+            double dist = distance(coordinates, dimensions, i, j);
             
+            #warning k(n) function should go here instead of Magic Number
+            if (dist < 0.2) {
+            adjmatrix[i][j] = dist;
+            adjmatrix[j][i] = adjmatrix[i][j];
+            }
             //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
         
         // This code can be removed later
+        //if(i%100==0) {
         printf("Finished the edge weights of node %d\n", i);
-
+        //}
+        
         #warning Figure out if I free it here
         free(coordinates[i]);
     }
