@@ -41,7 +41,7 @@ int main(int argc, const char * argv[]) {
         
         
         // Printing the coordinate matrix
-        
+        /*
         printf("Printing the coordinate matrix:\n");
         for(int i=0; i< numpoints; i++)
         {
@@ -49,15 +49,18 @@ int main(int argc, const char * argv[]) {
             {
                 printf("[%f], at position[%d][%d]\n", coordinates[i][j], i, j);
             }
-        }
+        }*/
 
     }
+    
+    // Might be worth adding some error checking earlier in the code so that dimension never gets here.
     else {
         printf("Ummmm. You done messed up.\n");
     }
 
     
     // Printing the adjmatrix
+    /*
     printf("Printing the adj matrix:\n");
     for(int i=0; i< numpoints; i++)
     {
@@ -66,12 +69,13 @@ int main(int argc, const char * argv[]) {
             printf("[%f], at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
     }
-    
+    */
 
     // insert code here...
-    printf("numpoints: %d\n", numpoints);
-    printf("numtrials: %d\n", numtrials);
-    printf("dimension: %d\n", dimensions);
+    printf("Success! Here are some stats:\n");
+    printf("Number of nodes: %d\n", numpoints);
+    printf("Trials: %d\n", numtrials);
+    printf("Dimensions: %d\n", dimensions);
     return 0;
 }
 
@@ -91,7 +95,10 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
         for(int j=0; j< dimensions; j++)
         {
             adjmatrix[i][j] = randomZeroToOne();
+            //printf("[%f] coordinate, at node [%d], axis [%d]\n", adjmatrix[i][j], i, j);
+
         }
+        printf("Finished the coordinates of node %d\n", i);
     }
 }
 
@@ -99,15 +106,20 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
 void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoints, int dimensions) {
     for(int i=0; i< numpoints; i++)
     {
-        for(int j=0; j< numpoints; j++)
+        for(int j=(0+i); j< numpoints; j++)
         {
             adjmatrix[i][j] = distance(coordinates, dimensions, i, j);
+            adjmatrix[j][i] = adjmatrix[i][j];
+            
+            //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
+        printf("Finished the edge weights of node %d\n", i);
     }
 }
 
 
 // creates a random double [0,1]; from http://stackoverflow.com/questions/6218399/how-to-generate-a-random-number-between-0-and-1
+// WE MIGHT HAVE TO REDO THIS SO THAT IT'S OUR OWN CODE, or MAYBE CITE IT?
 double randomZeroToOne()
 {
     return (double)rand() / (double)RAND_MAX ;
