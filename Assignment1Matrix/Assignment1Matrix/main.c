@@ -128,8 +128,8 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         }
         
         // This code can be removed later
-
         printf("Finished the edge weights of node %d\n", i);
+
         #warning Figure out if I free it here
         free(coordinates[i]);
     }
