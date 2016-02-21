@@ -38,7 +38,11 @@ int main(int argc, const char * argv[]) {
         // Fill adjmatrix with edge weights
         fillMatrixByDistance(adjmatrix, coordinates, numpoints, dimensions);
         
-        
+        #warning Figure out if I free it here
+        /*for (int i = 0; i < numpoints; i++){
+            free(coordinates[i]);
+        }*/
+        free(coordinates);
         
         // Printing the coordinate matrix
         /*
@@ -70,14 +74,20 @@ int main(int argc, const char * argv[]) {
         }
     }
     */
-
-    // insert code here...
+    
+    #warning Figure out if I free it here
+    for (int i = 0; i < numpoints; i++){
+        free(adjmatrix[i]);
+    }
+    free(adjmatrix);
+    
     printf("Success! Here are some stats:\n");
     printf("Number of nodes: %d\n", numpoints);
     printf("Trials: %d\n", numtrials);
     printf("Dimensions: %d\n", dimensions);
     return 0;
 }
+
 
 // Allocates memory for an X by Y matrix
 double** allocateMatrix(int X, int Y) {
@@ -98,7 +108,10 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
             //printf("[%f] coordinate, at node [%d], axis [%d]\n", adjmatrix[i][j], i, j);
 
         }
+        
+        // This code can be removed later
         printf("Finished the coordinates of node %d\n", i);
+        
     }
 }
 
@@ -113,7 +126,12 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
             
             //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
+        
+        // This code can be removed later
+
         printf("Finished the edge weights of node %d\n", i);
+        #warning Figure out if I free it here
+        free(coordinates[i]);
     }
 }
 
