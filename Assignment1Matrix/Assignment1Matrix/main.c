@@ -78,6 +78,12 @@ int main(int argc, const char * argv[]) {
     }
     */
     
+    
+    // Call Prims MST Algorithm -- Avi ADDED THIS LINE
+    primsMST(adjmatrix, numpoints);
+    
+    
+    
     #warning Figure out if I free it here
     for (int i = 0; i < numpoints; i++){
         free(adjmatrix[i]);
@@ -89,10 +95,7 @@ int main(int argc, const char * argv[]) {
     printf("Trials: %d\n", numtrials);
     printf("Dimensions: %d\n", dimensions);
     
-    
-    // AVI ADDED THIS LINE
-    
-    primsMST(adjmatrix, numpoints);
+
     return 0;
     
     
@@ -183,7 +186,7 @@ int* findMin(int verts[], bool inMST[]) {
 void primsMST(double** graph, int n) {
     
     // This statement isn't printing.. so have I really called the function?
-    printf("Started!\n");
+    printf("Started Prim's!\n");
     
     int parent[n];
     int key[n];
@@ -212,28 +215,9 @@ void primsMST(double** graph, int n) {
             }
         }
     }
-    printf("Got to the end!\n");
+    printf("Prim's algorithm has executed!\n");
                
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
