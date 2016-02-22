@@ -29,7 +29,7 @@ void fillMatrixByDistance(double**, double**, int, int);
 double distance(double**, int, int, int);
 int* findMin(int*, bool*);
 void primsMST(double**, int, int);
-void insert(Node node, priorityQ* heap, int weight);
+void insert(Node, priorityQ*);
 void rebuild(Node*, int, int);
 Node popMin(priorityQ*);
 void initialize(priorityQ*, int);
@@ -233,7 +233,7 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
     
     
     dist[sNode] = 0;
-    insert(s, &H, s.weight);
+    insert(s, &H);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
@@ -251,7 +251,7 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
                 popped.value = w;
                 popped.weight=dist[w];
                 
-                insert(popped, &H, popped.weight);
+                insert(popped, &H);
             }
         }
     }
@@ -266,7 +266,7 @@ void initialize(priorityQ *priorityq, int n) {
     priorityq->heap = (Node*)malloc(sizeof(Node)*(n+1));
 }
 
-void insert(Node node, priorityQ* heap, int weight) {
+void insert(Node node, priorityQ* heap) {
     int size = heap->size;
     ++heap->size;
     
