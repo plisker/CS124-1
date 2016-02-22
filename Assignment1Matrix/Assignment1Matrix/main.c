@@ -32,6 +32,7 @@ void primsMST(double**, int, int);
 void insert(Node node, priorityQ* heap, int weight);
 void rebuild(Node*, int, int);
 Node popMin(priorityQ*);
+void initialize(priorityQ*, int);
 
 int main(int argc, const char * argv[]) {
     
@@ -153,14 +154,14 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
             double dist = distance(coordinates, dimensions, i, j);
             
             #warning Need to justify this function...
-            if (dist < max_weight) {
+            //if (dist < max_weight) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
-            }
-            else {
+            //}
+            /*else {
                 adjmatrix[i][j] = (double)1;
                 adjmatrix[j][i] = (double)1;
-            }
+            }*/
             //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
         
@@ -207,15 +208,18 @@ int* findMin(int verts[], bool inMST[]) {
 // Prim's Algorithm...
 #warning Should it really be void? Shouldn't it return a pointer to the MST so that the average tree size be calculated?
 void primsMST(double** graph, int sNode, int numberOfNodes) {
-    
+    double sumOfEdges = 0.0;
     // This statement isn't printing.. so have I really called the function?
     printf("Started Prim's!\n");
     
-    Node v,w;
+    int v,w;
     int dist[numberOfNodes];
     int prev[numberOfNodes];
     bool inMST[numberOfNodes];
+    
     priorityQ H;
+    initialize(&H, numberOfNodes);
+
     
     for (int i = 0; i < numberOfNodes; i++) {
         dist[i] = INT_MAX;
@@ -229,25 +233,30 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
     
     
     dist[sNode] = 0;
-    insert(s, &H, dist[sNode]);
+    insert(s, &H, s.weight);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
-        v = popMin(&H);
+        Node popped = popMin(&H);
+        sumOfEdges+= popped.weight;
+        v=popped.value;
         
-        inMST[v.value] = true;
+        inMST[v] = true;
         
-        for (w.value = 0; w.value < numberOfNodes; w.value++) {
+        for (w = 0; w < numberOfNodes; w++) {
             // need to add removed edges condition by checking if edge exists
-            if ((!inMST[w.value]) && (graph[v.value][w.value] != 1) && (graph[v.value][w.value] < dist[w.value])) {
-                dist[w.value] = graph[v.value][w.value];
-                prev[w.value] = v.value;
-                insert(w,&H,dist[w.value]);
+            if ((!inMST[w]) && (graph[v][w] != 1) && (graph[v][w] < dist[w])) {
+                dist[w] = graph[v][w];
+                prev[w] = v;
+                popped.value = w;
+                popped.weight=dist[w];
+                
+                insert(popped, &H, popped.weight);
             }
         }
     }
-    printf("Prim's algorithm has executed!\n");
-               
+    printf("Prim's algorithm has executed!\n");;
+    printf("Tree size: %f\n", sumOfEdges);
 }
 
 
@@ -266,7 +275,7 @@ void insert(Node node, priorityQ* heap, int weight) {
     newNodePosition = size + 1;
     heap->heap[newNodePosition] = node;
     
-#warning Should these be .value or .weight? Priority queue is based on weight, right? Confused about what .value is...
+#warning POTENTIALLY RESOLVED: Should these be .value or .weight? Priority queue is based on weight, right? Confused about what .value is...
     while (newNodePosition > 1 && heap->heap[newNodePosition].weight < heap->heap[(newNodePosition)/2].weight) {
         tempNode = heap->heap[newNodePosition];
         heap->heap[newNodePosition] = heap->heap[newNodePosition/2];
