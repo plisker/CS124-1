@@ -95,8 +95,7 @@ int main(int argc, const char * argv[]) {
     
     
     // Call Prims MST Algorithm -- Avi ADDED THIS LINE
-    primsMST(adjmatrix, numpoints);
-    
+    primsMST(adjmatrix, rand()%numpoints, numpoints);
     
     
     #warning Figure out if I free it here
@@ -224,8 +223,13 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
         inMST[i] = false;
     }
     
+    Node s;
+    s.value=sNode;
+    s.weight=0;
+    
+    
     dist[sNode] = 0;
-    insert(sNode, &H, dist[sNode]);
+    insert(s, &H, dist[sNode]);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
@@ -254,7 +258,6 @@ void initialize(priorityQ *priorityq, int n) {
 }
 
 void insert(Node node, priorityQ* heap, int weight) {
-#warning still not doing anything with the weight...
     int size = heap->size;
     ++heap->size;
     
@@ -264,7 +267,7 @@ void insert(Node node, priorityQ* heap, int weight) {
     heap->heap[newNodePosition] = node;
     
 #warning Should these be .value or .weight? Priority queue is based on weight, right? Confused about what .value is...
-    while (newNodePosition > 1 && heap->heap[newNodePosition].value < heap->heap[(newNodePosition)/2].value) {
+    while (newNodePosition > 1 && heap->heap[newNodePosition].weight < heap->heap[(newNodePosition)/2].weight) {
         tempNode = heap->heap[newNodePosition];
         heap->heap[newNodePosition] = heap->heap[newNodePosition/2];
         heap->heap[newNodePosition/2] = tempNode;
@@ -297,12 +300,12 @@ void rebuild(Node* heap, int size, int heapIndex) {
         }
         else {
             // Determine which of the children is greater, for potential swapping
-            if (heap[childIndex].value > heap[childIndex+1].value) {
+            if (heap[childIndex].weight > heap[childIndex+1].weight) {
                 ++childIndex;
             }
         }
         // Swap if needed!
-        if (heap[childIndex].value < heap[heapIndex].value) {
+        if (heap[childIndex].weight < heap[heapIndex].weight) {
             tempNode = heap[childIndex];
             heap[childIndex] = heap[heapIndex];
             heap[heapIndex] = tempNode;
