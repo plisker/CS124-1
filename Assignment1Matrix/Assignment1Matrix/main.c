@@ -22,13 +22,17 @@ typedef struct priorityQ {
     int size;
 } priorityQ;
 
+typedef struct MSTree {
+    int* prev;
+    double* dist;
+} MSTree;
+
 double** allocateMatrix(int, int);
 double randomZeroToOne();
 void fillMatrixRandomly(double**, int, int);
 void fillMatrixByDistance(double**, double**, int, int);
 double distance(double**, int, int, int);
-int* findMin(int*, bool*);
-void primsMST(double**, int, int);
+MSTree primsMST(double**, int, int);
 void insert(Node, priorityQ*);
 void rebuild(Node*, int, int);
 Node popMin(priorityQ*);
@@ -58,21 +62,7 @@ int main(int argc, const char * argv[]) {
         fillMatrixByDistance(adjmatrix, coordinates, numpoints, dimensions);
         
         #warning Figure out if I free it here
-        /*for (int i = 0; i < numpoints; i++){
-            free(coordinates[i]);
-        }*/
-        free(coordinates);
-        
-        // Printing the coordinate matrix
-        /*
-        printf("Printing the coordinate matrix:\n");
-        for(int i=0; i< numpoints; i++)
-        {
-            for(int j=0; j< dimensions; j++)
-            {
-                printf("[%f], at position[%d][%d]\n", coordinates[i][j], i, j);
-            }
-        }*/
+        //free(coordinates);
 
     }
     
@@ -80,31 +70,31 @@ int main(int argc, const char * argv[]) {
     else {
         printf("Ummm. You done messed up.\n");
     }
-
-    
-    // Printing the adjmatrix
-    /*
-    printf("Printing the adj matrix:\n");
-    for(int i=0; i< numpoints; i++)
-    {
-        for(int j=0; j< numpoints; j++)
-        {
-            printf("[%f], at position[%d][%d]\n", adjmatrix[i][j], i, j);
-        }
-    }
-    */
     
     
     // Call Prims MST Algorithm -- Avi ADDED THIS LINE
-    primsMST(adjmatrix, rand()%numpoints, numpoints);
+    MSTree tree = primsMST(adjmatrix, rand()%numpoints, numpoints);
+    
+    double average = 0;
+    
+    for (int i = 0; i < numpoints; i++) {
+        if(tree.prev[i] >= 0 ) {
+#warning Iterate through edges in the graph
+            average += adjmatrix[i][tree.prev[i]];
+        }
+    }
+    
+#warning Need to create an overall average to get average across trials.
+    printf("Average edge: %f\n", average);
     
     
     #warning Figure out if I free it here
+    /*
     for (int i = 0; i < numpoints; i++){
         free(adjmatrix[i]);
     }
     free(adjmatrix);
-    
+    */
     printf("Success! Here are some stats:\n");
     printf("Number of nodes: %d\n", numpoints);
     printf("Trials: %d\n", numtrials);
@@ -146,7 +136,7 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
 
 // Filling up a matrix with distance between nodes
 void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoints, int dimensions) {
-    double max_weight = pow(numpoints, -(1/(double)dimensions));
+    double max_weight = 2*pow(numpoints, -(1/(double)dimensions));
     for(int i=0; i< numpoints; i++)
     {
         for(int j=(0+i); j< numpoints; j++)
@@ -171,13 +161,12 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         //}
         
         #warning Figure out if I free it here
-        free(coordinates[i]);
+        //free(coordinates[i]);
     }
 }
 
 
-// creates a random double [0,1]; from http://stackoverflow.com/questions/6218399/how-to-generate-a-random-number-between-0-and-1
-// WE MIGHT HAVE TO REDO THIS SO THAT IT'S OUR OWN CODE, or MAYBE CITE IT?
+// creates a random double [0,1]
 double randomZeroToOne()
 {
     return (double)rand() / (double)RAND_MAX ;
@@ -197,23 +186,16 @@ double distance(double** coordinates, int dimensions, int node1, int node2) {
     return distance;
 }
 
-// Implement Prims (THIS IS WHERE AVI STARTED)
-
-
-// Priority queue via heap
-int* findMin(int verts[], bool inMST[]) {
-    return &verts[0];
-}
 
 // Prim's Algorithm...
 #warning Should it really be void? Shouldn't it return a pointer to the MST so that the average tree size be calculated?
-void primsMST(double** graph, int sNode, int numberOfNodes) {
-    double sumOfEdges = 0.0;
+MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
+    MSTree tree;
     // This statement isn't printing.. so have I really called the function?
     printf("Started Prim's!\n");
     
     int v,w;
-    int dist[numberOfNodes];
+    double dist[numberOfNodes];
     int prev[numberOfNodes];
     bool inMST[numberOfNodes];
     
@@ -222,7 +204,7 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
 
     
     for (int i = 0; i < numberOfNodes; i++) {
-        dist[i] = INT_MAX;
+        dist[i] = INFINITY;
         prev[i] = -1;
         inMST[i] = false;
     }
@@ -238,7 +220,6 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
         Node popped = popMin(&H);
-        sumOfEdges+= popped.weight;
         v=popped.value;
         
         inMST[v] = true;
@@ -255,10 +236,11 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
             }
         }
     }
-    printf("Prim's algorithm has executed!\n");;
-    printf("Tree size: %f\n", sumOfEdges);
+    tree.prev=prev;
+    tree.dist=dist;
+    printf("Prim's algorithm has executed!\n");
+    return tree;
 }
-
 
 
 void initialize(priorityQ *priorityq, int n) {
