@@ -44,60 +44,65 @@ int main(int argc, const char * argv[]) {
     int numtrials = atoi(argv[3]);
     int dimensions = atoi(argv[4]);
     srand((unsigned)time(NULL));
+    double globalAverage = 0;
     
-    double** adjmatrix = allocateMatrix(numpoints, numpoints);
-    
-    if (dimensions == 0) {
-        // Use this to fill adj matrix with random edge weights
-        fillMatrixRandomly(adjmatrix, numpoints, numpoints);
-    }
-    else if (dimensions == 2 | dimensions == 3 | dimensions == 4) {
+    for (int i = 0; i < numtrials; i++) {
+        double** adjmatrix = allocateMatrix(numpoints, numpoints);
         
-        // Create array for coordinates
-        double** coordinates = allocateMatrix(numpoints, dimensions);
-
-        // Fill array with random [0,1] coordinates
-        fillMatrixRandomly(coordinates, numpoints, dimensions);
-        
-        // Fill adjmatrix with edge weights
-        fillMatrixByDistance(adjmatrix, coordinates, numpoints, dimensions);
-        
-        free(coordinates);
-
-    }
-    
-    // Might be worth adding some error checking earlier in the code so that dimension never gets here.
-    else {
-        printf("Ummm. You done messed up.\n");
-    }
-    
-    
-    // Call Prims MST Algorithm
-    MSTree tree = primsMST(adjmatrix, rand()%numpoints, numpoints);
-    
-    double average = 0;
-    
-    for (int i = 0; i < numpoints; i++) {
-        if(tree.prev[i] >= 0 ) {
-            average += adjmatrix[i][tree.prev[i]];
+        if (dimensions == 0) {
+            // Use this to fill adj matrix with random edge weights
+            fillMatrixRandomly(adjmatrix, numpoints, numpoints);
         }
-    }
-    
+        else if (dimensions == 2 | dimensions == 3 | dimensions == 4) {
+            
+            // Create array for coordinates
+            double** coordinates = allocateMatrix(numpoints, dimensions);
+            
+            // Fill array with random [0,1] coordinates
+            fillMatrixRandomly(coordinates, numpoints, dimensions);
+            
+            // Fill adjmatrix with edge weights
+            fillMatrixByDistance(adjmatrix, coordinates, numpoints, dimensions);
+            
+            free(coordinates);
+            
+        }
+        
+        // Might be worth adding some error checking earlier in the code so that dimension never gets here.
+        else {
+            printf("Ummm. You done messed up.\n");
+        }
+        
+        
+        // Call Prims MST Algorithm
+        MSTree tree = primsMST(adjmatrix, rand()%numpoints, numpoints);
+        
+        double average = 0;
+        
+        for (int i = 0; i < numpoints; i++) {
+            if(tree.prev[i] >= 0 ) {
+                average += adjmatrix[i][tree.prev[i]];
+            }
+        }
+        
 #warning Need to create an overall average to get average across trials.
-    printf("Tree size: %f\n", average);
-    
-    
-    for (int i = 0; i < numpoints; i++){
-        free(adjmatrix[i]);
+        printf("Tree size in trial %d: %f\n", i, average);
+        globalAverage += average;
+        
+#warning Should I be freeing here?
+        /*for (int i = 0; i < numpoints; i++){
+            free(adjmatrix[i]);
+        }*/
+        //free(adjmatrix);
+        
+        //printf("Success! Here are some stats:\n");
+        //printf("Number of nodes: %d\n", numpoints);
+        //printf("Trials: %d\n", numtrials);
+        //printf("Dimensions: %d\n", dimensions);
     }
-    free(adjmatrix);
     
-    printf("Success! Here are some stats:\n");
-    printf("Number of nodes: %d\n", numpoints);
-    printf("Trials: %d\n", numtrials);
-    printf("Dimensions: %d\n", dimensions);
-    
-
+    globalAverage = globalAverage/numtrials;
+    printf("\nGlobal average across %d trials: %f\n", numtrials, globalAverage);
     return 0;
     
     
@@ -124,7 +129,7 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
         }
         
         // This code can be removed later
-        printf("Finished the coordinates of node %d\n", i);
+        //printf("Finished the coordinates of node %d\n", i);
         
     }
 }
@@ -147,13 +152,10 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
                 adjmatrix[i][j] = (double)1;
                 adjmatrix[j][i] = (double)1;
             }
-            //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
         
         // This code can be removed later
-        //if(i%100==0) {
-        printf("Finished the edge weights of node %d\n", i);
-        //}
+        //printf("Finished the edge weights of node %d\n", i);
         
         free(coordinates[i]);
     }
