@@ -77,7 +77,7 @@ int main(int argc, const char * argv[]) {
     
     // Might be worth adding some error checking earlier in the code so that dimension never gets here.
     else {
-        printf("Ummmm. You done messed up.\n");
+        printf("Ummm. You done messed up.\n");
     }
 
     
@@ -225,11 +225,11 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
     }
     
     dist[sNode] = 0;
-    insert(sNode,&H,dist[sNode]);
+    insert(sNode, &H, dist[sNode]);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
-        v = (popMin(&H);
+        v = popMin(&H);
         
         inMST[v.value] = true;
         
