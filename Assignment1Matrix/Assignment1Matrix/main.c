@@ -1,5 +1,5 @@
 //
-// CS 125
+// CS 124
 // Coding Assignment 1
 // Avi Saraf & Paul Lisker
 //
@@ -132,7 +132,6 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         {
             double dist = distance(coordinates, dimensions, i, j);
             
-            #warning Need to justify this function...
             if (dist < max_weight) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
@@ -223,7 +222,7 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
 // Initialize heap
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
-    priorityq->heap = (Node*)malloc(sizeof(Node)*(n*n));
+    priorityq->heap = (Node*)malloc(sizeof(Node)*(n*(n/4)));
 }
 
 // Insert new nodes into heap
