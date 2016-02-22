@@ -201,6 +201,7 @@ void primsMST(double** graph, int s, int n) {
     
     for (int i = 0; i < n; i++) {
         dist[i] = INT_MAX;
+        prev[i] = -1;
         inMST[i] = false;
     }
     
@@ -208,17 +209,17 @@ void primsMST(double** graph, int s, int n) {
     insert(s,&H,dist[s]);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
-    while (H.size != 0){
+    while (H.size != 0) {
         v = removeMin(&H);
         
         inMST[v.value] = true;
         
         for (w.value = 0; w < n; w++) {
             // need to add removed edges condition by checking if edge exists
-            if ((inMST[w.value] == false) && (graph[v.value][w.value] != 1) && (graph[v.value][w.value] < dist[w.value])) {
+            if ((!inMST[w.value]) && (graph[v.value][w.value] != 1) && (graph[v.value][w.value] < dist[w.value])) {
                 dist[w.value] = graph[v.value][w.value];
-                prev[w.value] = v.VALUE;
-                insert(w,&H,dist[w]);
+                prev[w.value] = v.value;
+                insert(w,&H,dist[w.value]);
             }
         }
     }
