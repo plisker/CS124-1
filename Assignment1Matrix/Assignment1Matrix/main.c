@@ -52,6 +52,7 @@ int main(int argc, const char * argv[]) {
         fillMatrixRandomly(adjmatrix, numpoints, numpoints);
     }
     else if (dimensions == 2| dimensions == 3 | dimensions ==4) {
+        
         // Create array for coordinates
         double** coordinates = allocateMatrix(numpoints, dimensions);
 
@@ -61,8 +62,7 @@ int main(int argc, const char * argv[]) {
         // Fill adjmatrix with edge weights
         fillMatrixByDistance(adjmatrix, coordinates, numpoints, dimensions);
         
-        #warning Figure out if I free it here
-        //free(coordinates);
+        free(coordinates);
 
     }
     
@@ -72,29 +72,26 @@ int main(int argc, const char * argv[]) {
     }
     
     
-    // Call Prims MST Algorithm -- Avi ADDED THIS LINE
+    // Call Prims MST Algorithm
     MSTree tree = primsMST(adjmatrix, rand()%numpoints, numpoints);
     
     double average = 0;
     
     for (int i = 0; i < numpoints; i++) {
         if(tree.prev[i] >= 0 ) {
-#warning Iterate through edges in the graph
             average += adjmatrix[i][tree.prev[i]];
         }
     }
     
 #warning Need to create an overall average to get average across trials.
-    printf("Average edge: %f\n", average);
+    printf("Tree size: %f\n", average);
     
     
-    #warning Figure out if I free it here
-    /*
     for (int i = 0; i < numpoints; i++){
         free(adjmatrix[i]);
     }
     free(adjmatrix);
-    */
+    
     printf("Success! Here are some stats:\n");
     printf("Number of nodes: %d\n", numpoints);
     printf("Trials: %d\n", numtrials);
@@ -144,14 +141,14 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
             double dist = distance(coordinates, dimensions, i, j);
             
             #warning Need to justify this function...
-            //if (dist < max_weight) {
+            if (dist < max_weight) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
-            //}
-            /*else {
+            }
+            else {
                 adjmatrix[i][j] = (double)1;
                 adjmatrix[j][i] = (double)1;
-            }*/
+            }
             //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
         
@@ -160,8 +157,7 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         printf("Finished the edge weights of node %d\n", i);
         //}
         
-        #warning Figure out if I free it here
-        //free(coordinates[i]);
+        free(coordinates[i]);
     }
 }
 
@@ -188,7 +184,6 @@ double distance(double** coordinates, int dimensions, int node1, int node2) {
 
 
 // Prim's Algorithm...
-#warning Should it really be void? Shouldn't it return a pointer to the MST so that the average tree size be calculated?
 MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     MSTree tree;
     // This statement isn't printing.. so have I really called the function?
@@ -257,7 +252,6 @@ void insert(Node node, priorityQ* heap) {
     newNodePosition = size + 1;
     heap->heap[newNodePosition] = node;
     
-#warning POTENTIALLY RESOLVED: Should these be .value or .weight? Priority queue is based on weight, right? Confused about what .value is...
     while (newNodePosition > 1 && heap->heap[newNodePosition].weight < heap->heap[(newNodePosition)/2].weight) {
         tempNode = heap->heap[newNodePosition];
         heap->heap[newNodePosition] = heap->heap[newNodePosition/2];
@@ -266,20 +260,6 @@ void insert(Node node, priorityQ* heap) {
     }
 }
 
-
-
-/*
- typedef struct Node {
- #warning More might be needed in this struct...
- int value;
- double weight;
- } Node;
- 
- typedef struct priorityQ {
- Node* heap;
- int size;
- } priorityQ;
- */
 
 void rebuild(Node* heap, int size, int heapIndex) {
     int childIndex;
@@ -318,119 +298,9 @@ Node popMin(priorityQ* heap) {
     // rebuild the heap!
     rebuild(heap->heap, size, 1);
     
-#warning check to make sure this decreases the stored value in heap struct
     --heap->size;
     return minNode;
 }
-
-
-#warning Functions needed: InitializeHeapDONE; InsertDONE; RebuildDONE; removeMinDONE
-
-////////// COPIED FROM ELSEWHERE AS REFERENCE, DELETE DELETE DELETE
-/*
-typedef struct heapData {
-    //dummy
-} heapData;
-
-typedef struct heapNode {
-    int value;
-    heapData data;               //dummy
-} heapNode;
-
-typedef struct PQ {
-    heapNode* heap;
-    int size;
-} PQ;
-
-void inssert(heapNode aNode, heapNode* heap, int size) {
-    int idx;
-    heapNode tmp;
-    idx = size + 1;
-    heap[idx] = aNode;
-    while (heap[idx].value < heap[idx/2].value && idx > 1) {
-        tmp = heap[idx];
-        heap[idx] = heap[idx/2];
-        heap[idx/2] = tmp;
-        idx /= 2;
-    }
-}
-
-void enqueue(heapNode node, PQ *q) {
-    insert(node, q->heap, q->size);
-    ++q->size;
-}
-
-void shiftdown(heapNode* heap, int size, int idx) {
-    int cidx;        //index for child
-    heapNode tmp;
-    for (;;) {
-        cidx = idx*2;
-        if (cidx > size) {
-            break;   //it has no child
-        }
-        if (cidx < size) {
-            if (heap[cidx].value > heap[cidx+1].value) {
-                ++cidx;
-            }
-        }
-        //swap if necessary
-        if (heap[cidx].value < heap[idx].value) {
-            tmp = heap[cidx];
-            heap[cidx] = heap[idx];
-            heap[idx] = tmp;
-            idx = cidx;
-        } else {
-            break;
-        }
-    }
-}
-
-heapNode removeMin(heapNode* heap, int size) {
-    int cidx;
-    heapNode rv = heap[1];
-    //printf("%d:%d:%d\n", size, heap[1].value, heap[size].value);
-    heap[1] = heap[size];
-    --size;
-    shiftdown(heap, size, 1);
-    return rv;
-}
-
-
-heapNode dequeue(PQ *q) {
-    heapNode rv = removeMin(q->heap, q->size);
-    --q->size;
-    return rv;
-}
-
-void initQueue(PQ *q, int n) {
-    q->size = 0;
-    q->heap = (heapNode*)malloc(sizeof(heapNode)*(n+1));
-}
-
-int mmain(int argc, char **argv) {
-    int n;
-    int i;
-    PQ q;
-    heapNode hn;
-    n = atoi(argv[1]);
-    initQueue(&q, n);
-    srand(time(NULL));
-    for (i = 0; i < n; ++i) {
-        hn.value = rand()%10000;
-        printf("enqueue node with value: %d\n", hn.value);
-        enqueue(hn, &q);
-    }
-    printf("\ndequeue all values:\n");
-    for (i = 0; i < n; ++i) {
-        hn = dequeue(&q);
-        printf("dequeued node with value: %d, queue size after removal: %d\n", hn.value, q.size);
-    }
-}
-
-*/
-
-
-
 
 
 
