@@ -11,13 +11,26 @@
 #include <stdbool.h>
 #include <limits.h>
 
+typedef struct Node {
+#warning More might be needed in this struct...
+    int value;
+    double weight;
+} Node;
+
+typedef struct priorityQ {
+    Node* heap;
+    int size;
+} priorityQ;
+
 double** allocateMatrix(int, int);
 double randomZeroToOne();
 void fillMatrixRandomly(double**, int, int);
 void fillMatrixByDistance(double**, double**, int, int);
 double distance(double**, int, int, int);
 int* findMin(int*, bool*);
-void primsMST(double**, int);
+void primsMST(double**, int, int);
+void insert(Node node, priorityQ* heap, int weight);
+void rebuild(Node*, int, int);
 
 int main(int argc, const char * argv[]) {
     
@@ -132,7 +145,7 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
 
 // Filling up a matrix with distance between nodes
 void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoints, int dimensions) {
-    double max_weight = pow(numpoints, -(1/(double)dimensions))
+    double max_weight = pow(numpoints, -(1/(double)dimensions));
     for(int i=0; i< numpoints; i++)
     {
         for(int j=(0+i); j< numpoints; j++)
@@ -193,33 +206,33 @@ int* findMin(int verts[], bool inMST[]) {
 
 // Prim's Algorithm...
 #warning Should it really be void? Shouldn't it return a pointer to the MST so that the average tree size be calculated?
-void primsMST(double** graph, int s, int n) {
+void primsMST(double** graph, int sNode, int numberOfNodes) {
     
     // This statement isn't printing.. so have I really called the function?
     printf("Started Prim's!\n");
     
     Node v,w;
-    int dist[n];
-    int prev[n];
-    bool inMST[n];
+    int dist[numberOfNodes];
+    int prev[numberOfNodes];
+    bool inMST[numberOfNodes];
     priorityQ H;
     
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < numberOfNodes; i++) {
         dist[i] = INT_MAX;
         prev[i] = -1;
         inMST[i] = false;
     }
     
-    dist[s] = 0;
-    insert(s,&H,dist[s]);
+    dist[sNode] = 0;
+    insert(sNode,&H,dist[sNode]);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
-        v = removeMin(&H);
+        v = popMin(&H);
         
         inMST[v.value] = true;
         
-        for (w.value = 0; w < n; w++) {
+        for (w.value = 0; w.value < numberOfNodes; w.value++) {
             // need to add removed edges condition by checking if edge exists
             if ((!inMST[w.value]) && (graph[v.value][w.value] != 1) && (graph[v.value][w.value] < dist[w.value])) {
                 dist[w.value] = graph[v.value][w.value];
@@ -233,34 +246,88 @@ void primsMST(double** graph, int s, int n) {
 }
 
 
-typedef struct Node {
-#warning More might be needed in this struct...
-    int value;
-} Node;
-
-typedef struct priorityQ {
-    Node* heap;
-    int size;
-} priorityQ;
 
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
     priorityq->heap = (Node*)malloc(sizeof(Node)*(n+1));
 }
 
-void insert(Node node, Node* heap, int size) {
+void insert(Node node, priorityQ* heap, int weight) {
+#warning still not doing anything with the weight...
+    int size = heap->size;
+    ++heap->size;
+    
     int newNodePosition;
     Node tempNode;
     newNodePosition = size + 1;
-    heap[newNodePosition] = node;
+    heap->heap[newNodePosition] = node;
     
-    while (newNodePosition > 1 && heap[newNodePosition].value < heap[(newNodePosition)/2].value) {
-        tempNode = heap[newNodePosition];
-        heap[newNodePosition] = heap[newNodePosition/2];
-        heap[newNodePosition/2] = tempNode;
+#warning Should these be .value or .weight? Priority queue is based on weight, right? Confused about what .value is...
+    while (newNodePosition > 1 && heap->heap[newNodePosition].value < heap->heap[(newNodePosition)/2].value) {
+        tempNode = heap->heap[newNodePosition];
+        heap->heap[newNodePosition] = heap->heap[newNodePosition/2];
+        heap->heap[newNodePosition/2] = tempNode;
         newNodePosition = (newNodePosition/2);
     }
 }
+
+
+
+/*
+ typedef struct Node {
+ #warning More might be needed in this struct...
+ int value;
+ double weight;
+ } Node;
+ 
+ typedef struct priorityQ {
+ Node* heap;
+ int size;
+ } priorityQ;
+ */
+
+void rebuild(Node* heap, int size, int heapIndex) {
+    int childIndex;
+    Node tempNode;
+    while (true) {
+        childIndex = heapIndex*2;
+        if (childIndex > size) {
+            break;
+        }
+        else {
+            // Determine which of the children is greater, for potential swapping
+            if (heap[childIndex].value > heap[childIndex+1].value) {
+                ++childIndex;
+            }
+        }
+        // Swap if needed!
+        if (heap[childIndex].value < heap[heapIndex].value) {
+            tempNode = heap[childIndex];
+            heap[childIndex] = heap[heapIndex];
+            heap[heapIndex] = tempNode;
+            heapIndex = childIndex;
+        } else {
+            break;
+        }
+    }
+}
+
+Node popHeapMin(priorityQ* heap) {
+    Node minNode = heap->heap[1];
+    int size = heap->size;
+    
+    // Swap head for last node and decrement size
+    heap->heap[1] = heap->heap[size];
+    --size;
+    
+    // rebuild the heap!
+    rebuild(heap->heap, size, 1);
+    
+#warning check to make sure this decreases the stored value in heap struct
+    --heap->size;
+    return minNode;
+}
+
 
 #warning Functions needed: InitializeHeap; Insert; Rebuild; removeMin; Enqueue (maybe within Insert); Dequeue (maybe within removeMin)
 
@@ -279,7 +346,7 @@ typedef struct PQ {
     int size;
 } PQ;
 
-void insert(heapNode aNode, heapNode* heap, int size) {
+void inssert(heapNode aNode, heapNode* heap, int size) {
     int idx;
     heapNode tmp;
     idx = size + 1;
@@ -290,6 +357,11 @@ void insert(heapNode aNode, heapNode* heap, int size) {
         heap[idx/2] = tmp;
         idx /= 2;
     }
+}
+
+void enqueue(heapNode node, PQ *q) {
+    insert(node, q->heap, q->size);
+    ++q->size;
 }
 
 void shiftdown(heapNode* heap, int size, int idx) {
@@ -326,10 +398,7 @@ heapNode removeMin(heapNode* heap, int size) {
     shiftdown(heap, size, 1);
     return rv;
 }
-void enqueue(heapNode node, PQ *q) {
-    insert(node, q->heap, q->size);
-    ++q->size;
-}
+
 
 heapNode dequeue(PQ *q) {
     heapNode rv = removeMin(q->heap, q->size);
