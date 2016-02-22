@@ -85,15 +85,15 @@ int main(int argc, const char * argv[]) {
         }
         
         globalAverage += average;
-        
 #warning Should I be freeing here?
-        /*for (int i = 0; i < numpoints; i++){
+        for (int i = 0; i < numpoints; i++){
             free(adjmatrix[i]);
-        }*/
-        //free(adjmatrix);
+        }
+        free(adjmatrix);
+        
     }
     
-    globalAverage = globalAverage/numtrials;
+    globalAverage = (globalAverage / (float) numtrials);
     printf("%f %d %d %d\n", globalAverage, numpoints, numtrials, dimensions);
     return 0;
     
@@ -209,7 +209,6 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
         inMST[v] = true;
         
         for (w = 0; w < numberOfNodes; w++) {
-            // need to add removed edges condition by checking if edge exists
             if ((!inMST[w]) && (graph[v][w] != 1) && (graph[v][w] < dist[w])) {
                 dist[w] = graph[v][w];
                 prev[w] = v;
@@ -228,7 +227,7 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
 
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
-    priorityq->heap = (Node*)malloc(sizeof(Node)*(n+1));
+    priorityq->heap = (Node*)malloc(sizeof(Node)*(n*n));
 }
 
 void insert(Node node, priorityQ* heap) {
