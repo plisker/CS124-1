@@ -85,8 +85,6 @@ int main(int argc, const char * argv[]) {
             }
         }
         
-#warning Need to create an overall average to get average across trials.
-        printf("Tree size in trial %d: %f\n", i, average);
         globalAverage += average;
         
 #warning Should I be freeing here?
@@ -102,7 +100,7 @@ int main(int argc, const char * argv[]) {
     }
     
     globalAverage = globalAverage/numtrials;
-    printf("\nGlobal average across %d trials: %f\n", numtrials, globalAverage);
+    printf("%f %d %d %d\n", globalAverage, numpoints, numtrials, dimensions);
     return 0;
     
     
@@ -186,8 +184,6 @@ double distance(double** coordinates, int dimensions, int node1, int node2) {
 // Prim's Algorithm...
 MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     MSTree tree;
-    // This statement isn't printing.. so have I really called the function?
-    printf("Started Prim's!\n");
     
     int v,w;
     double dist[numberOfNodes];
@@ -212,7 +208,6 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     dist[sNode] = 0;
     insert(s, &H);
     
-    // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
         Node popped = popMin(&H);
         v=popped.value;
@@ -233,7 +228,6 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     }
     tree.prev=prev;
     tree.dist=dist;
-    printf("Prim's algorithm has executed!\n");
     return tree;
 }
 
