@@ -31,6 +31,7 @@ int* findMin(int*, bool*);
 void primsMST(double**, int, int);
 void insert(Node node, priorityQ* heap, int weight);
 void rebuild(Node*, int, int);
+Node popMin(priorityQ*);
 
 int main(int argc, const char * argv[]) {
     
@@ -228,7 +229,7 @@ void primsMST(double** graph, int sNode, int numberOfNodes) {
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
     while (H.size != 0) {
-        v = popMin(&H);
+        v = (popMin(&H);
         
         inMST[v.value] = true;
         
@@ -312,7 +313,7 @@ void rebuild(Node* heap, int size, int heapIndex) {
     }
 }
 
-Node popHeapMin(priorityQ* heap) {
+Node popMin(priorityQ* heap) {
     Node minNode = heap->heap[1];
     int size = heap->size;
     
@@ -329,9 +330,10 @@ Node popHeapMin(priorityQ* heap) {
 }
 
 
-#warning Functions needed: InitializeHeap; Insert; Rebuild; removeMin; Enqueue (maybe within Insert); Dequeue (maybe within removeMin)
+#warning Functions needed: InitializeHeapDONE; InsertDONE; RebuildDONE; removeMinDONE
 
 ////////// COPIED FROM ELSEWHERE AS REFERENCE, DELETE DELETE DELETE
+/*
 typedef struct heapData {
     //dummy
 } heapData;
@@ -431,7 +433,7 @@ int mmain(int argc, char **argv) {
     }
 }
 
-
+*/
 
 
 
