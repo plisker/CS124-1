@@ -137,8 +137,8 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         {
             double dist = distance(coordinates, dimensions, i, j);
             
-            #warning k(n) function should go here instead of Magic Number
-            if (dist < 0.2) {
+            #warning Need to justify this function...
+            if (dist < pow(numpoints, -(1/(double)dimensions))) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
             }
@@ -226,15 +226,26 @@ void primsMST(double** adjmatrix, int n) {
 
 
 typedef struct Node {
-#warning More might be needed in this struct
+#warning More might be needed in this struct...
     int value;
 } Node;
 
 typedef struct priorityQ {
-    Node* minHeap;
+    Node* heap;
     int size;
 } priorityQ;
 
+void initialize(priorityQ *priorityq, int n) {
+    priorityq->size = 0;
+    priorityq->heap = (Node*)malloc(sizeof(Node)*(n+1));
+}
+
+void insert(Node node, Node* heap, int size) {
+    int newNodePosition;
+    Node tempNode;
+    newNodePosition = size + 1;
+    heap[newNodePosition] = node;
+}
 
 #warning Functions needed: InitializeHeap; Insert; Rebuild; removeMin; Enqueue (maybe within Insert); Dequeue (maybe within removeMin)
 
