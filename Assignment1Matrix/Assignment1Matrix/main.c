@@ -132,6 +132,7 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
 
 // Filling up a matrix with distance between nodes
 void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoints, int dimensions) {
+    double max_weight = pow(numpoints, -(1/(double)dimensions))
     for(int i=0; i< numpoints; i++)
     {
         for(int j=(0+i); j< numpoints; j++)
@@ -139,9 +140,13 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
             double dist = distance(coordinates, dimensions, i, j);
             
             #warning Need to justify this function...
-            if (dist < pow(numpoints, -(1/(double)dimensions))) {
+            if (dist < max_weight) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
+            }
+            else {
+                adjmatrix[i][j] = (double)1;
+                adjmatrix[j][i] = (double)1;
             }
             //printf("[%f] edge weight, at position[%d][%d]\n", adjmatrix[i][j], i, j);
         }
@@ -248,6 +253,13 @@ void insert(Node node, Node* heap, int size) {
     Node tempNode;
     newNodePosition = size + 1;
     heap[newNodePosition] = node;
+    
+    while (newNodePosition > 1 && heap[newNodePosition].value < heap[(newNodePosition)/2].value) {
+        tempNode = heap[newNodePosition];
+        heap[newNodePosition] = heap[newNodePosition/2];
+        heap[newNodePosition/2] = tempNode;
+        newNodePosition = (newNodePosition/2);
+    }
 }
 
 #warning Functions needed: InitializeHeap; Insert; Rebuild; removeMin; Enqueue (maybe within Insert); Dequeue (maybe within removeMin)
