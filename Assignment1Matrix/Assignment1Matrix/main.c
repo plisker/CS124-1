@@ -9,6 +9,7 @@
 #include <time.h>
 #include <math.h>
 #include <stdbool.h>
+#include <limits.h>
 
 double** allocateMatrix(int, int);
 double randomZeroToOne();
@@ -187,42 +188,43 @@ int* findMin(int verts[], bool inMST[]) {
 
 // Prim's Algorithm...
 #warning Should it really be void? Shouldn't it return a pointer to the MST so that the average tree size be calculated?
-void primsMST(double** adjmatrix, int n) {
+void primsMST(double** graph, int s, int n) {
     
     // This statement isn't printing.. so have I really called the function?
     printf("Started Prim's!\n");
     
-    int parent[n];
-    int key[n];
+    Node v,w;
+    int dist[n];
+    int prev[n];
     bool inMST[n];
+    priorityQ H;
     
     for (int i = 0; i < n; i++) {
-        key[i] = 2;
+        dist[i] = INT_MAX;
         inMST[i] = false;
     }
     
-    key[0] = 0;
-    parent[0] = -1;
-    
+    dist[s] = 0;
+    insert(s,&H,dist[s]);
     
     // I think something is going wrong in this loop with larger n... Maybe I'm not using pointers right?
-    for (int k = 0; k < n-1; k++){
-        int* minpath = findMin(key, inMST);
+    while (H.size != 0){
+        v = removeMin(&H);
         
-        inMST[*minpath] = true;
+        inMST[v.value] = true;
         
-        for (int j = 0; j < n; j++) {
+        for (w.value = 0; w < n; w++) {
             // need to add removed edges condition by checking if edge exists
-            if ((inMST[j] == false) & (adjmatrix[k][j] < key[j])) {
-                parent[j] = k;
-                key[j] = adjmatrix[k][j];
+            if ((inMST[w.value] == false) && (graph[v.value][w.value] != 1) && (graph[v.value][w.value] < dist[w.value])) {
+                dist[w.value] = graph[v.value][w.value];
+                prev[w.value] = v.VALUE;
+                insert(w,&H,dist[w]);
             }
         }
     }
     printf("Prim's algorithm has executed!\n");
                
 }
-
 
 
 typedef struct Node {
