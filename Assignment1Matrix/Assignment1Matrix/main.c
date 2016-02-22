@@ -1,5 +1,5 @@
 //
-// CS 125
+// CS 124
 // Coding Assignment 1
 // Avi Saraf & Paul Lisker
 //
@@ -85,7 +85,6 @@ int main(int argc, const char * argv[]) {
         }
         
         globalAverage += average;
-#warning Should I be freeing here?
         for (int i = 0; i < numpoints; i++){
             free(adjmatrix[i]);
         }
@@ -116,13 +115,8 @@ void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
         for(int j=0; j< dimensions; j++)
         {
             adjmatrix[i][j] = randomZeroToOne();
-            //printf("[%f] coordinate, at node [%d], axis [%d]\n", adjmatrix[i][j], i, j);
 
         }
-        
-        // This code can be removed later
-        //printf("Finished the coordinates of node %d\n", i);
-        
     }
 }
 
@@ -135,7 +129,6 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
         {
             double dist = distance(coordinates, dimensions, i, j);
             
-            #warning Need to justify this function...
             if (dist < max_weight) {
             adjmatrix[i][j] = dist;
             adjmatrix[j][i] = adjmatrix[i][j];
@@ -145,9 +138,6 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
                 adjmatrix[j][i] = (double)1;
             }
         }
-        
-        // This code can be removed later
-        //printf("Finished the edge weights of node %d\n", i);
         
         free(coordinates[i]);
     }
@@ -227,7 +217,6 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
 
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
-#warning Magic number...
     priorityq->heap = (Node*)malloc(sizeof(Node)*(n*(n/4)));
 }
 
