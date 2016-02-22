@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
         // Use this to fill adj matrix with random edge weights
         fillMatrixRandomly(adjmatrix, numpoints, numpoints);
     }
-    else if (dimensions == 2| dimensions == 3 | dimensions ==4) {
+    else if (dimensions == 2 | dimensions == 3 | dimensions == 4) {
         
         // Create array for coordinates
         double** coordinates = allocateMatrix(numpoints, dimensions);
@@ -103,9 +103,7 @@ int main(int argc, const char * argv[]) {
     
 }
 
-// Allocates memory for an X by Y matrix
-// Inspiration... http://pleasemakeanote.blogspot.com/2008/06/2d-arrays-in-c-using-malloc.html
-// We might have to change this or cite the webstie above
+// Allocates memory for an X by Y matrix using double pointers...
 double** allocateMatrix(int X, int Y) {
     double** adjmatrix;
     adjmatrix = (double**) malloc(X*sizeof(double*));
@@ -260,7 +258,7 @@ void insert(Node node, priorityQ* heap) {
     }
 }
 
-
+// Heapify function
 void rebuild(Node* heap, int size, int heapIndex) {
     int childIndex;
     Node tempNode;
@@ -272,6 +270,7 @@ void rebuild(Node* heap, int size, int heapIndex) {
         else {
             // Determine which of the children is greater, for potential swapping
             if (heap[childIndex].weight > heap[childIndex+1].weight) {
+                // Adjust index to higher child
                 ++childIndex;
             }
         }
@@ -287,6 +286,7 @@ void rebuild(Node* heap, int size, int heapIndex) {
     }
 }
 
+// Dequeue
 Node popMin(priorityQ* heap) {
     Node minNode = heap->heap[1];
     int size = heap->size;
