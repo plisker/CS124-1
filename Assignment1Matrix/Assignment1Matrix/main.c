@@ -12,7 +12,6 @@
 #include <limits.h>
 
 typedef struct Node {
-#warning More might be needed in this struct...
     int value;
     double weight;
 } Node;
@@ -92,11 +91,6 @@ int main(int argc, const char * argv[]) {
             free(adjmatrix[i]);
         }*/
         //free(adjmatrix);
-        
-        //printf("Success! Here are some stats:\n");
-        //printf("Number of nodes: %d\n", numpoints);
-        //printf("Trials: %d\n", numtrials);
-        //printf("Dimensions: %d\n", dimensions);
     }
     
     globalAverage = globalAverage/numtrials;
