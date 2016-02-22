@@ -227,7 +227,8 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
 
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
-    priorityq->heap = (Node*)malloc(sizeof(Node)*(n*n));
+#warning Magic number... 4 should be dimension
+    priorityq->heap = (Node*)malloc(sizeof(Node)*(n*4));
 }
 
 void insert(Node node, priorityQ* heap) {
