@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Assignment1Matrix/main.c"
-            timestampString = "477845626.63967"
+            timestampString = "477867659.944559"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "primsMST()"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,27 +26,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Assignment1Matrix/main.c"
-            timestampString = "477857599.61707"
+            timestampString = "477867659.944559"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "234"
-            endingLineNumber = "234"
-            landmarkName = "insert()"
+            startingLineNumber = "241"
+            endingLineNumber = "241"
+            landmarkName = "initialize()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Assignment1Matrix/main.c"
-            timestampString = "477857599.61707"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

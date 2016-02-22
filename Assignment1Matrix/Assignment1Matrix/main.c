@@ -39,6 +39,7 @@ void initialize(priorityQ*, int);
 
 int main(int argc, const char * argv[]) {
     
+    // Grab input
     int numpoints = atoi(argv[2]);
     int numtrials = atoi(argv[3]);
     int dimensions = atoi(argv[4]);
@@ -85,7 +86,7 @@ int main(int argc, const char * argv[]) {
         }
         
         globalAverage += average;
-#warning Should I be freeing here?
+
         for (int i = 0; i < numpoints; i++){
             free(adjmatrix[i]);
         }
@@ -93,6 +94,7 @@ int main(int argc, const char * argv[]) {
         
     }
     
+    // Calculate average of all trials
     globalAverage = (globalAverage / (float) numtrials);
     printf("%f %d %d %d\n", globalAverage, numpoints, numtrials, dimensions);
     return 0;
@@ -100,7 +102,7 @@ int main(int argc, const char * argv[]) {
     
 }
 
-// Allocates memory for an X by Y matrix using double pointers...
+// Allocates memory for an X by Y matrix using double pointers
 double** allocateMatrix(int X, int Y) {
     double** adjmatrix;
     adjmatrix = (double**) malloc(X*sizeof(double*));
@@ -109,24 +111,19 @@ double** allocateMatrix(int X, int Y) {
     return adjmatrix;
 }
 
-// Filling up a matrix with random weights [0,1]
+// Fills up a matrix with random weights [0,1]
 void fillMatrixRandomly(double** adjmatrix, int numpoints, int dimensions) {
     for(int i=0; i< numpoints; i++)
     {
         for(int j=0; j< dimensions; j++)
         {
             adjmatrix[i][j] = randomZeroToOne();
-            //printf("[%f] coordinate, at node [%d], axis [%d]\n", adjmatrix[i][j], i, j);
 
         }
-        
-        // This code can be removed later
-        //printf("Finished the coordinates of node %d\n", i);
-        
     }
 }
 
-// Filling up a matrix with distance between nodes
+// Fills up a matrix with distance between nodes
 void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoints, int dimensions) {
     double max_weight = 2*pow(numpoints, -(1/(double)dimensions));
     for(int i=0; i< numpoints; i++)
@@ -145,16 +142,12 @@ void fillMatrixByDistance(double** adjmatrix, double** coordinates, int numpoint
                 adjmatrix[j][i] = (double)1;
             }
         }
-        
-        // This code can be removed later
-        //printf("Finished the edge weights of node %d\n", i);
-        
         free(coordinates[i]);
     }
 }
 
 
-// creates a random double [0,1]
+// Creates a random double [0,1]
 double randomZeroToOne()
 {
     return (double)rand() / (double)RAND_MAX ;
@@ -175,7 +168,7 @@ double distance(double** coordinates, int dimensions, int node1, int node2) {
 }
 
 
-// Prim's Algorithm...
+// Prim's Algorithm
 MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     MSTree tree;
     
@@ -186,8 +179,8 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     
     priorityQ H;
     initialize(&H, numberOfNodes);
-
     
+    // Starting place
     for (int i = 0; i < numberOfNodes; i++) {
         dist[i] = INFINITY;
         prev[i] = -1;
@@ -203,11 +196,14 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     insert(s, &H);
     
     while (H.size != 0) {
+        // Find min in heap
         Node popped = popMin(&H);
         v=popped.value;
         
+        // Add to MST
         inMST[v] = true;
         
+        // Add new nodes to heap
         for (w = 0; w < numberOfNodes; w++) {
             if ((!inMST[w]) && (graph[v][w] != 1) && (graph[v][w] < dist[w])) {
                 dist[w] = graph[v][w];
@@ -224,21 +220,26 @@ MSTree primsMST(double** graph, int sNode, int numberOfNodes) {
     return tree;
 }
 
-
+// Initialize heap
 void initialize(priorityQ *priorityq, int n) {
     priorityq->size = 0;
     priorityq->heap = (Node*)malloc(sizeof(Node)*(n*n));
 }
 
+// Insert new nodes into heap
 void insert(Node node, priorityQ* heap) {
+    
+    // Update size
     int size = heap->size;
     ++heap->size;
     
+    // Create new position
     int newNodePosition;
     Node tempNode;
     newNodePosition = size + 1;
     heap->heap[newNodePosition] = node;
     
+    // Find valid position
     while (newNodePosition > 1 && heap->heap[newNodePosition].weight < heap->heap[(newNodePosition)/2].weight) {
         tempNode = heap->heap[newNodePosition];
         heap->heap[newNodePosition] = heap->heap[newNodePosition/2];
